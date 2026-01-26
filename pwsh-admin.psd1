@@ -14,6 +14,7 @@
         'Set-ServiceStartupAutomatic',
         'Get-VMAddress',
         'Set-DeployTestVMNetworkLocation',
+        'Test-DeployTestVMNetworkHealth',
         'Clear-AgentCache',
         'Get-SystemPerformance'
     )
