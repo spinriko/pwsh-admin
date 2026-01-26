@@ -1,55 +1,73 @@
-function New-DeployTestVMWifiSwitch {
+function Get-FirewallLandscape {
     [CmdletBinding()]
-    param(
-        [string]$SwitchName = 'External-WiFi',
-        [string]$WifiAdapterName = 'Wi-Fi'
-    )
+    param()
 
-    Write-Host "=== Creating Wi-Fi External VMSwitch ===" -ForegroundColor Cyan
+    Write-Host "=== Windows Firewall Landscape ===" -ForegroundColor Cyan
 
-    # --- Check 1: Does the switch already exist? ---
-    $existing = Get-VMSwitch -Name $SwitchName -ErrorAction SilentlyContinue
-    if ($existing) {
-        Write-Host "Switch '$SwitchName' already exists. Nothing to do." -ForegroundColor Green
-        return
+    # --- Profiles ---
+    Write-Host "`n[Profiles]" -ForegroundColor Yellow
+    $profiles = Get-NetFirewallProfile |
+        Select-Object Name, Enabled, DefaultInboundAction, DefaultOutboundAction
+    $profiles | Format-Table -AutoSize
+
+    # --- Inbound Rules ---
+    Write-Host "`n[Inbound Rules]" -ForegroundColor Yellow
+    $inbound = Get-NetFirewallRule -Direction Inbound |
+        Select-Object DisplayName, Enabled, Action, Profile, @{n='Ports';e={($_ | Get-NetFirewallPortFilter).LocalPort}},
+                      @{n='Protocol';e={($_ | Get-NetFirewallPortFilter).Protocol}},
+                      @{n='Program';e={($_ | Get-NetFirewallApplicationFilter).Program}},
+                      @{n='Service';e={($_ | Get-NetFirewallServiceFilter).Service}}
+    $inbound | Format-Table -AutoSize
+
+    # --- Outbound Rules ---
+    Write-Host "`n[Outbound Rules]" -ForegroundColor Yellow
+    $outbound = Get-NetFirewallRule -Direction Outbound |
+        Select-Object DisplayName, Enabled, Action, Profile, @{n='Ports';e={($_ | Get-NetFirewallPortFilter).LocalPort}},
+                      @{n='Protocol';e={($_ | Get-NetFirewallPortFilter).Protocol}},
+                      @{n='Program';e={($_ | Get-NetFirewallApplicationFilter).Program}},
+                      @{n='Service';e={($_ | Get-NetFirewallServiceFilter).Service}}
+    $outbound | Format-Table -AutoSize
+
+    # --- Hyper-V Related Rules ---
+    Write-Host "`n[Hyper-V Related Rules]" -ForegroundColor Yellow
+    $hyperv = Get-NetFirewallRule |
+        Where-Object DisplayName -Match 'Hyper-V|VM|DHCP|DNS|NAT' |
+        Select-Object DisplayName, Enabled, Action, Profile
+    $hyperv | Format-Table -AutoSize
+
+    # --- Disabled but Important Rules ---
+    Write-Host "`n[Disabled but Potentially Important Rules]" -ForegroundColor Yellow
+    $disabledImportant = Get-NetFirewallRule |
+        Where-Object {
+            $_.Enabled -eq 'False' -and
+            ($_.DisplayName -match 'RDP|Remote Desktop|File and Printer Sharing|SMB|Hyper-V|DHCP|DNS')
+        } |
+        Select-Object DisplayName, Profile, Action
+    $disabledImportant | Format-Table -AutoSize
+
+    # --- Open Ports (Inbound Allow) ---
+    Write-Host "`n[Open Inbound Ports]" -ForegroundColor Yellow
+    $openPorts = $inbound |
+        Where-Object { $_.Enabled -eq 'True' -and $_.Action -eq 'Allow' -and $_.Ports -ne $null } |
+        Select-Object DisplayName, Ports, Protocol, Profile
+    $openPorts | Format-Table -AutoSize
+
+    # --- Summary ---
+    Write-Host "`n=== Summary ===" -ForegroundColor Cyan
+
+    if ($profiles.DefaultInboundAction -contains 'Allow') {
+        Write-Warning "One or more profiles allow inbound traffic by default. This is a security risk."
     }
 
-    # --- Check 2: Confirm Wi-Fi adapter exists ---
-    $wifi = Get-NetAdapter -Name $WifiAdapterName -ErrorAction SilentlyContinue
-    if (-not $wifi) {
-        Write-Warning "Wi-Fi adapter '$WifiAdapterName' not found."
-        return
+    if ($openPorts.Count -eq 0) {
+        Write-Host "✓ No open inbound ports detected." -ForegroundColor Green
+    } else {
+        Write-Host "⚠ Open inbound ports detected. Review required." -ForegroundColor DarkYellow
     }
 
-    # --- Check 3: Confirm Wi-Fi is connected to an SSID ---
-    $wifiStatus = netsh wlan show interfaces |
-                  Select-String 'State|SSID' |
-                  ForEach-Object { $_.ToString().Trim() }
-
-    $state = ($wifiStatus | Where-Object { $_ -like 'State*' }) -replace 'State\s*:\s*',''
-    $ssid  = ($wifiStatus | Where-Object { $_ -like 'SSID*'  }) -replace 'SSID\s*:\s*',''
-
-    if ($state -ne 'connected' -or [string]::IsNullOrWhiteSpace($ssid)) {
-        Write-Warning "Wi-Fi is not connected to an SSID. Hyper-V cannot bind a Wi-Fi switch unless connected."
-        Write-Warning "Current state: '$state'  SSID: '$ssid'"
-        return
+    if ($disabledImportant.Count -gt 0) {
+        Write-Host "⚠ Important rules are disabled. Review recommended." -ForegroundColor DarkYellow
     }
 
-    Write-Host "Wi-Fi is connected to SSID '$ssid'. Proceeding..." -ForegroundColor Green
-
-    # --- Check 4: Create the switch ---
-    try {
-        New-VMSwitch -Name $SwitchName `
-                     -NetAdapterName $WifiAdapterName `
-                     -AllowManagementOS $true `
-                     -ErrorAction Stop
-
-        Write-Host "Successfully created Wi-Fi switch '$SwitchName'." -ForegroundColor Green
-    }
-    catch {
-        Write-Warning "Failed to create Wi-Fi switch '$SwitchName'."
-        Write-Warning "Reason: $($_.Exception.Message)"
-    }
-
-    Write-Host "=== Wi-Fi switch creation complete ===" -ForegroundColor Cyan
+    Write-Host "`nFirewall landscape report complete." -ForegroundColor Cyan
 }
