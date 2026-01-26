@@ -1,5 +1,8 @@
 # pwsh-admin.psm1
 
+# Firewalls
+. $PSScriptRoot/firewalls/Get-FirewallLandscape.ps1
+
 # Services
 . $PSScriptRoot/services/Start-WebDevelopmentServices.ps1
 . $PSScriptRoot/services/Stop-WebDevelopmentServices.ps1
@@ -18,6 +21,7 @@
 
 # Exported functions
 Export-ModuleMember -Function `
+    Get-FirewallLandscape
     Start-WebDevelopmentServices, `
     Stop-WebDevelopmentServices, `
     Set-ServiceStartupManual, `

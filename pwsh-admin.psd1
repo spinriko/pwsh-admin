@@ -8,6 +8,7 @@
     PowerShellVersion = '5.1'
 
     FunctionsToExport = @(
+        'Get-FirewallLandscape',
         'Start-WebDevelopmentServices',
         'Stop-WebDevelopmentServices',
         'Set-ServiceStartupManual',
