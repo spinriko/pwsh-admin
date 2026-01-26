@@ -10,6 +10,7 @@
 . $PSScriptRoot/vm/Get-VMAddress.ps1
 . $PSScriptRoot/vm/Set-DeployTestVMNetworkLocation.ps1
 . $PSScriptRoot/vm/TestDeployTestVMNetworkHealth.ps1
+. $PSScriptRoot/vm/Test-DeployTestVMNicLayout
 
 # Utilities
 . $PSScriptRoot/util/Clear-AgentCache.ps1
@@ -24,5 +25,6 @@ Export-ModuleMember -Function `
     Get-VMAddress, `
     Set-DeployTestVMNetworkLocation, `
     Test-DeployTestVMNetworkHealth, `
+    Test-DeployTestVMNicLayout, `
     Clear-AgentCache, `
     Get-SystemPerformance

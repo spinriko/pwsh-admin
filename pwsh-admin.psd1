@@ -15,6 +15,7 @@
         'Get-VMAddress',
         'Set-DeployTestVMNetworkLocation',
         'Test-DeployTestVMNetworkHealth',
+        'Test-DeployTestVMNicLayout',
         'Clear-AgentCache',
         'Get-SystemPerformance'
     )
