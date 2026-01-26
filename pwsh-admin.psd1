@@ -13,6 +13,7 @@
         'Set-ServiceStartupManual',
         'Set-ServiceStartupAutomatic',
         'Get-VMAddress',
+        'Set-DeployTestVMNetworkLocation',
         'Clear-AgentCache',
         'Get-SystemPerformance'
     )
