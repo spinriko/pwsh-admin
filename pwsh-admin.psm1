@@ -21,7 +21,7 @@
 
 # Exported functions
 Export-ModuleMember -Function `
-    Get-FirewallLandscape
+    Get-FirewallLandscape, `
     Start-WebDevelopmentServices, `
     Stop-WebDevelopmentServices, `
     Set-ServiceStartupManual, `
