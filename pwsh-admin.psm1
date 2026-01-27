@@ -2,6 +2,12 @@
 
 # Firewalls
 . $PSScriptRoot/firewalls/Get-FirewallLandscape.ps1
+. $PSScriptRoot/firewalls/Get-FirewallSecurityHoles.ps1
+
+# Microtik
+. $PSScriptRoot/microtik/Invoke-MicrotikCommand.ps1
+. $PSScriptRoot/microtik/Get-MicrotikFirewallLandscape.ps1
+. $PSScriptRoot/microtik/Get-MicrotikFirewallHoles.ps1
 
 # Services
 . $PSScriptRoot/services/Start-WebDevelopmentServices.ps1
@@ -12,7 +18,7 @@
 # VM
 . $PSScriptRoot/vm/Get-VMAddress.ps1
 . $PSScriptRoot/vm/Set-DeployTestVMNetworkLocation.ps1
-. $PSScriptRoot/vm/TestDeployTestVMNetworkHealth.ps1
+. $PSScriptRoot/vm/Test-DeployTestVMNetworkHealth.ps1
 . $PSScriptRoot/vm/Test-DeployTestVMNicLayout
 
 # Utilities
@@ -22,6 +28,10 @@
 # Exported functions
 Export-ModuleMember -Function `
     Get-FirewallLandscape, `
+    Get-FirewallSecurityHoles, `
+    Invoke-MicrotikCommand, `
+    Get-MicrotikFirewallLandscape, `
+    Get-MicrotikFirewallHoles, `
     Start-WebDevelopmentServices, `
     Stop-WebDevelopmentServices, `
     Set-ServiceStartupManual, `

@@ -9,6 +9,10 @@
 
     FunctionsToExport = @(
         'Get-FirewallLandscape',
+        'Get-FirewallSecurityHoles',
+        'Invoke-MicrotikCommand',
+        'Get-MicrotikFirewallLandscape',
+        'Get-MicrotikFirewallHoles',
         'Start-WebDevelopmentServices',
         'Stop-WebDevelopmentServices',
         'Set-ServiceStartupManual',

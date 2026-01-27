@@ -10,34 +10,71 @@ function Get-FirewallLandscape {
         Select-Object Name, Enabled, DefaultInboundAction, DefaultOutboundAction
     $profiles | Format-Table -AutoSize
 
-    # --- Inbound Rules ---
+    # --- Preload all rules and filters (FAST) ---
     Write-Host "`n[Inbound Rules]" -ForegroundColor Yellow
-    $inbound = Get-NetFirewallRule -Direction Inbound |
-        Select-Object DisplayName, Enabled, Action, Profile, @{n='Ports';e={($_ | Get-NetFirewallPortFilter).LocalPort}},
-                      @{n='Protocol';e={($_ | Get-NetFirewallPortFilter).Protocol}},
-                      @{n='Program';e={($_ | Get-NetFirewallApplicationFilter).Program}},
-                      @{n='Service';e={($_ | Get-NetFirewallServiceFilter).Service}}
+
+    $allRules   = Get-NetFirewallRule
+    $portFilter = Get-NetFirewallPortFilter
+    $appFilter  = Get-NetFirewallApplicationFilter
+    $svcFilter  = Get-NetFirewallServiceFilter
+
+    # Build lookup tables
+    $portByRule = $portFilter | Group-Object InstanceID -AsHashTable
+    $appByRule  = $appFilter  | Group-Object InstanceID -AsHashTable
+    $svcByRule  = $svcFilter  | Group-Object InstanceID -AsHashTable
+
+    # Join everything in memory
+    $inbound = $allRules |
+        Where-Object Direction -eq Inbound |
+        ForEach-Object {
+            $id = $_.InstanceID
+
+            [pscustomobject]@{
+                DisplayName = $_.DisplayName
+                Enabled     = $_.Enabled
+                Action      = $_.Action
+                Profile     = $_.Profile
+                Ports       = ($portByRule[$id].LocalPort -join ',')
+                Protocol    = ($portByRule[$id].Protocol -join ',')
+                Program     = ($appByRule[$id].Program -join ',')
+                Service     = ($svcByRule[$id].Service -join ',')
+            }
+        }
+
     $inbound | Format-Table -AutoSize
 
     # --- Outbound Rules ---
     Write-Host "`n[Outbound Rules]" -ForegroundColor Yellow
-    $outbound = Get-NetFirewallRule -Direction Outbound |
-        Select-Object DisplayName, Enabled, Action, Profile, @{n='Ports';e={($_ | Get-NetFirewallPortFilter).LocalPort}},
-                      @{n='Protocol';e={($_ | Get-NetFirewallPortFilter).Protocol}},
-                      @{n='Program';e={($_ | Get-NetFirewallApplicationFilter).Program}},
-                      @{n='Service';e={($_ | Get-NetFirewallServiceFilter).Service}}
+
+    $outbound = $allRules |
+        Where-Object Direction -eq Outbound |
+        ForEach-Object {
+            $id = $_.InstanceID
+
+            [pscustomobject]@{
+                DisplayName = $_.DisplayName
+                Enabled     = $_.Enabled
+                Action      = $_.Action
+                Profile     = $_.Profile
+                Ports       = ($portByRule[$id].LocalPort -join ',')
+                Protocol    = ($portByRule[$id].Protocol -join ',')
+                Program     = ($appByRule[$id].Program -join ',')
+                Service     = ($svcByRule[$id].Service -join ',')
+            }
+        }
+
     $outbound | Format-Table -AutoSize
 
     # --- Hyper-V Related Rules ---
     Write-Host "`n[Hyper-V Related Rules]" -ForegroundColor Yellow
-    $hyperv = Get-NetFirewallRule |
+    $hyperv = $allRules |
         Where-Object DisplayName -Match 'Hyper-V|VM|DHCP|DNS|NAT' |
         Select-Object DisplayName, Enabled, Action, Profile
     $hyperv | Format-Table -AutoSize
 
     # --- Disabled but Important Rules ---
     Write-Host "`n[Disabled but Potentially Important Rules]" -ForegroundColor Yellow
-    $disabledImportant = Get-NetFirewallRule |
+    $disabledImportant = $allRules |
         Where-Object {
             $_.Enabled -eq 'False' -and
             ($_.DisplayName -match 'RDP|Remote Desktop|File and Printer Sharing|SMB|Hyper-V|DHCP|DNS')
@@ -48,7 +85,7 @@ function Get-FirewallLandscape {
     # --- Open Ports (Inbound Allow) ---
     Write-Host "`n[Open Inbound Ports]" -ForegroundColor Yellow
     $openPorts = $inbound |
-        Where-Object { $_.Enabled -eq 'True' -and $_.Action -eq 'Allow' -and $_.Ports -ne $null } |
+        Where-Object { $_.Enabled -eq 'True' -and $_.Action -eq 'Allow' -and $_.Ports } |
         Select-Object DisplayName, Ports, Protocol, Profile
     $openPorts | Format-Table -AutoSize
 
