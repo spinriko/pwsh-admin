@@ -1,31 +1,37 @@
 function Invoke-MicrotikCommand {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory=$true)]
         [string]$Command,
 
-        [string]$RouterHost = "192.168.99.1",
+        [Parameter(Mandatory=$false)]
         [string]$User = "admin",
-        [string]$KeyPath = "$env:USERPROFILE\.ssh\mikrotik-routeros"
+
+        [Parameter(Mandatory=$false)]
+        [string]$RouterHost = "192.168.99.1"
     )
 
+    # Build SSH arguments
     $sshArgs = @(
-        "-o", "IdentitiesOnly=yes"
-        "-o", "PubkeyAcceptedAlgorithms=+ssh-rsa"
-        "-o", "HostkeyAlgorithms=+ssh-rsa"
-        "-o", "MACs=hmac-sha1,hmac-md5"
-        "-i", $KeyPath
+        "-o", "StrictHostKeyChecking=no",
+        "-o", "UserKnownHostsFile=/dev/null",
         "$User@$RouterHost"
-        $Command
     )
 
-    # Run SSH and capture all output
-    $output = & ssh @sshArgs 2>&1
-    $exit = $LASTEXITCODE
+    # Create a temp file to hold the exact RouterOS command
+    $tempFile = New-TemporaryFile
 
-    if ($exit -ne 0) {
-        Write-Warning "SSH exited with code $exit"
+    try {
+        # Write the command EXACTLY as provided
+        Set-Content -Path $tempFile -Value $Command -Encoding ASCII -NoNewline
+
+        # Pipe the file into SSH so no quoting occurs
+        $result = & ssh @sshArgs < $tempFile
+
+        return $result
     }
-
-    return $output
+    finally {
+        # Always clean up
+        Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
+    }
 }
