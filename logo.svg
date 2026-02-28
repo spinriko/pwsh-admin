@@ -1,0 +1,151 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#2b1747"/>
+
+  <!-- Stars -->
+  <g fill="#ffffff" opacity="0.9">
+    <circle cx="80" cy="90" r="2"/>
+    <circle cx="220" cy="150" r="1.5"/>
+    <circle cx="350" cy="60" r="2.5"/>
+    <circle cx="500" cy="130" r="1.8"/>
+    <circle cx="650" cy="80" r="2.2"/>
+    <circle cx="780" cy="170" r="1.6"/>
+    <circle cx="950" cy="60" r="2.3"/>
+    <circle cx="1100" cy="140" r="1.7"/>
+    <circle cx="150" cy="260" r="1.8"/>
+    <circle cx="300" cy="220" r="2.1"/>
+    <circle cx="450" cy="260" r="1.5"/>
+    <circle cx="600" cy="230" r="2.4"/>
+    <circle cx="750" cy="260" r="1.9"/>
+    <circle cx="900" cy="220" r="1.6"/>
+    <circle cx="1050" cy="260" r="2.0"/>
+    <circle cx="200" cy="360" r="1.7"/>
+    <circle cx="380" cy="340" r="2.1"/>
+    <circle cx="560" cy="360" r="1.6"/>
+    <circle cx="740" cy="340" r="2.0"/>
+    <circle cx="920" cy="360" r="1.8"/>
+  </g>
+
+  <!-- PowerShell planet (blue, top-left) -->
+  <g transform="translate(230,190)">
+    <defs>
+      <radialGradient id="psGrad" cx="30%" cy="30%" r="70%">
+        <stop offset="0%" stop-color="#6fb7ff"/>
+        <stop offset="100%" stop-color="#1f5fa8"/>
+      </radialGradient>
+    </defs>
+    <circle r="90" fill="url(#psGrad)"/>
+    <!-- PowerShell logo -->
+    <path d="M-45 -20 L35 -40 Q50 -45 45 -30 L10 40 Q5 50 -10 45 L-60 30 Q-75 25 -70 10 Z"
+          fill="#ffffff" opacity="0.9"/>
+    <rect x="-5" y="5" width="40" height="8" rx="4" fill="#ffffff" opacity="0.9"/>
+  </g>
+
+  <!-- Java planet (orange, top-right) -->
+  <g transform="translate(850,200)">
+    <defs>
+      <radialGradient id="javaGrad" cx="30%" cy="30%" r="70%">
+        <stop offset="0%" stop-color="#ffcf7a"/>
+        <stop offset="100%" stop-color="#e57a1f"/>
+      </radialGradient>
+    </defs>
+    <circle r="110" fill="url(#javaGrad)"/>
+    <!-- Simplified Java cup -->
+    <ellipse cx="0" cy="30" rx="45" ry="12" fill="none" stroke="#000000" stroke-width="4"/>
+    <path d="M-35 30 Q-30 5 0 0 Q30 5 35 30" fill="none" stroke="#000000" stroke-width="4"/>
+    <path d="M25 10 Q45 10 45 25 Q45 40 25 40" fill="none" stroke="#000000" stroke-width="4"/>
+    <!-- Steam -->
+    <path d="M-5 -20 Q-15 -35 -5 -50 Q5 -65 -5 -80" fill="none" stroke="#000000" stroke-width="3"/>
+  </g>
+
+  <!-- C# planet (deep purple, center) -->
+  <g transform="translate(600,320)">
+    <defs>
+      <radialGradient id="csharpGrad" cx="30%" cy="30%" r="70%">
+        <stop offset="0%" stop-color="#b38cff"/>
+        <stop offset="100%" stop-color="#4b1f7a"/>
+      </radialGradient>
+    </defs>
+    <circle r="95" fill="url(#csharpGrad)"/>
+    <!-- C# text -->
+    <text x="-40" y="15"
+          font-family="Segoe UI, Arial, sans-serif"
+          font-size="64"
+          fill="#ffffff"
+          font-weight="bold">C#</text>
+  </g>
+
+  <!-- Go planet (light blue, lower-left) -->
+  <g transform="translate(380,470)">
+    <defs>
+      <radialGradient id="goGrad" cx="30%" cy="30%" r="70%">
+        <stop offset="0%" stop-color="#b6f3ff"/>
+        <stop offset="100%" stop-color="#3aa9c9"/>
+      </radialGradient>
+    </defs>
+    <circle r="80" fill="url(#goGrad)"/>
+    <!-- Simplified Go gopher silhouette -->
+    <path d="M-30 -20 Q-30 -55 0 -55 Q30 -55 30 -20 Q40 -10 40 10 Q40 40 0 40 Q-40 40 -40 10 Q-40 -10 -30 -20 Z"
+          fill="#ffffff" opacity="0.95"/>
+    <circle cx="-10" cy="-30" r="4" fill="#3aa9c9"/>
+    <circle cx="10" cy="-30" r="4" fill="#3aa9c9"/>
+  </g>
+
+  <!-- Rust planet (dark gray gear, lower-right) -->
+  <g transform="translate(830,470)">
+    <defs>
+      <radialGradient id="rustGrad" cx="30%" cy="30%" r="70%">
+        <stop offset="0%" stop-color="#777777"/>
+        <stop offset="100%" stop-color="#333333"/>
+      </radialGradient>
+    </defs>
+    <circle r="85" fill="url(#rustGrad)"/>
+    <!-- Simplified Rust gear + R -->
+    <circle r="70" fill="none" stroke="#000000" stroke-width="10" stroke-linecap="round" stroke-dasharray="10 18"/>
+    <text x="-22" y="20"
+          font-family="Segoe UI, Arial, sans-serif"
+          font-size="64"
+          fill="#000000"
+          font-weight="bold">R</text>
+  </g>
+
+  <!-- Rocket "PIONEER" -->
+  <g transform="translate(260,520) rotate(-20)">
+    <!-- Exhaust -->
+    <polygon points="-140,20 -40,5 -40,35" fill="#ffffff" opacity="0.85"/>
+    <!-- Body -->
+    <rect x="-40" y="5" width="160" height="30" rx="15" fill="#f5f5f5" stroke="#c0c0c0" stroke-width="3"/>
+    <!-- Nose -->
+    <polygon points="120,5 150,20 120,35" fill="#d62828"/>
+    <!-- Tail fins -->
+    <polygon points="-40,5 -70,0 -40,20" fill="#d62828"/>
+    <polygon points="-40,35 -70,40 -40,20" fill="#d62828"/>
+    <!-- Window -->
+    <circle cx="0" cy="20" r="9" fill="#4b4b4b"/>
+    <circle cx="0" cy="20" r="5" fill="#9ad7ff"/>
+    <!-- Text -->
+    <text x="20" y="28"
+          font-family="Segoe UI, Arial, sans-serif"
+          font-size="18"
+          fill="#d62828"
+          font-weight="bold">PIONEER</text>
+  </g>
+
+  <!-- POLYVERSE PIONEERS text -->
+  <g transform="translate(600,720)">
+    <text x="0" y="0"
+          font-family="Segoe UI, Arial, sans-serif"
+          font-size="64"
+          fill="#e63946"
+          font-weight="900"
+          text-anchor="middle"
+          letter-spacing="4">POLYVERSE</text>
+    <text x="0" y="52"
+          font-family="Segoe UI, Arial, sans-serif"
+          font-size="44"
+          fill="#e5e5e5"
+          font-weight="700"
+          text-anchor="middle"
+          letter-spacing="6">PIONEERS</text>
+  </g>
+</svg>
